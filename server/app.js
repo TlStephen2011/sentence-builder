@@ -4,7 +4,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
 const sequelize = require("./utils/database");
 
@@ -12,8 +11,8 @@ const Sentence = require('./models/sentence');
 const Word = require('./models/word');
 const WordType = require('./models/wordType');
 
-Sentence.hasMany(Word);
-Word.hasOne(WordType);
+Word.hasMany(Sentence);
+WordType.hasOne(Word);
 
 var app = express();
 
@@ -24,11 +23,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 sequelize
   .sync({force: true})
-  // .sync()
+//   .sync()
   .then((result) => {
     // Create word types
     WordType.create({ wordType: "Noun" });
