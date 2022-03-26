@@ -14,7 +14,7 @@ const Sentence = sequelize.define("sentence", {
   },
   wordId: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   position: {
     type: Sequelize.INTEGER,

@@ -90,6 +90,10 @@ sequelize
     Word.create({ word: "few", wordTypeId: 8 });
 
     Word.create({ word: "!", wordTypeId: 9 });
+    Word.create({ word: " ", wordTypeId: 9 });
+    Word.create({ word: "", wordTypeId: 9 });
+
+    // Sentence.create({ wordId:43, sentenceId: 1, position: 1 });
   })
   .catch(err => console.log(err));
 
