@@ -14,7 +14,7 @@ router.get('/words', async function(req, res) {
   if (id)
     res.json(await Word.findAll({where: { wordTypeId: id}}));
   else
-  res.json(await Word.findAll());
+    res.json(await Word.findAll());
 });
 
 router.post('/sentence', async function(req, res) {
@@ -45,15 +45,44 @@ router.post('/sentence', async function(req, res) {
   }
 });
 
-// router.get('/sentence', async function(req, res) {
-//   const sentenceId = req.query.id;
-  
-//   if (sentenceId) {
-//     let words = sequelize.query('SELECT MAX(sentenceId) AS sentenceId FROM sentences');
-//   } else {
+router.get('/sentence', async function(req, res) {
+  let sentences = await Sentence.findAll();
+  sentences.sort(function(a, b) {
+    if (a.position < b.position && a.sentenceId < b.sentenceId)
+      return true;
+    else
+      return false;
+  });
+  res.json(await buildSentences(sentences));
+});
 
-//   }
+async function buildSentences(sentencesObj) {
+  var i = 0;
+  var fullSentences = [];
+  var sentenceId = 0;
+  var fullSentence = '';
+  while (i < sentencesObj.length)
+  {
+    const currentSentence = sentencesObj[i];
 
-// });
+    if (currentSentence.wordId == null || currentSentence.wordId == undefined) {
+      i++;
+
+      if (currentSentence.sentenceId != sentenceId) {
+        fullSentences.push(fullSentence.trimEnd());
+        sentenceId++;
+        fullSentence = '';
+      }
+
+      continue;
+    }
+
+    var wordObj = await Word.findOne({ where: { id: currentSentence.wordId } });
+    fullSentence = fullSentence + wordObj.word + " ";
+    i++;
+  }
+
+  return fullSentences;
+}
 
 module.exports = router;
